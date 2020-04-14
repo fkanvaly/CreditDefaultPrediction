@@ -3,6 +3,12 @@ import numpy as np
 import time
 import datetime 
 from datetime import datetime
+from sklearn.preprocessing import LabelEncoder
+
+import sys
+sys.path.append("../../CreditDefaultPrediction")
+
+from utils.memory import *
 
 def prepocess_data(path):
     df=pd.read_csv(path)
@@ -53,6 +59,30 @@ def prepocess_data(path):
     ##mean_age divide by Years_At_Residence
     df["ratio_age_business"]=df["mean_age"]/(1+df["Years_At_Residence"])
     df=df.drop(["join_age","YEARS_BINNED","mean_age"],axis=1)
+    
+    return reduce_mem_usage(df)
+
+def encode_data(df):
+    le = LabelEncoder()
+    le_count = 0
+    multi_cat = []
+    # # Iterate through the columns
+    for col in df:
+        if df[col].dtype.name == 'category':
+            # If 2 or fewer unique categories
+            if len(list(df[col].unique())) == 2:
+                # Train on the training data
+                le.fit(df[col])
+                # Transform both training and testing data
+                df[col] = le.transform(df[col])
+                
+                # Keep track of how many columns were label encoded
+                le_count += 1
+            else:
+                multi_cat.append(col)
+    
+    df = pd.get_dummies(df,prefix=multi_cat)
+    print('%d columns were label encoded and %d got dummies' % (le_count,len(multi_cat)))
     return df
 
 if __name__ == "__main__":
@@ -62,4 +92,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     df = prepocess_data(args.path)
+    df = encode_data(df)
+    df = reduce_mem_usage(df)
     print(df)
+    import ipdb; ipdb.set_trace()

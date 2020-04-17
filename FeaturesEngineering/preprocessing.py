@@ -37,11 +37,11 @@ def prepocess_data(path):
     df["bussiness_salaries"]=df["Net_Annual_Income"].astype("float")/(1+df["Years_At_Business"].values)
 
     ## change all status different to married to "Single"
-    df["Marital_Status"]=np.where((df["Marital_Status"]!="Married"),"Single",df["Marital_Status"])
+    df["Marital_Status"]=np.where((df["Marital_Status"]!="Married"),"Alone",df["Marital_Status"])
 
     ## Income divide by Nb_Poject
 
-    df["Nb_salaries"]=data["Net_Annual_Income"].astype("float")/(1+data["Nb_Of_Products"].values)
+    df["Nb_salaries"]=df["Net_Annual_Income"].astype("float")/(1+df["Nb_Of_Products"].values)
 
     ##dependance divide by num of year in business
 
@@ -57,7 +57,7 @@ def prepocess_data(path):
 
     df = pd.merge(df,age_groups,on = 'YEARS_BINNED',how = 'left')
     ##mean_age divide by Years_At_Residence
-    df["ratio_age_business"]=df["mean_age"]/(1+df["Years_At_Residence"])
+    # df["ratio_age_business"]=df["mean_age"]/(1+df["Years_At_Residence"])
     df=df.drop(["join_age","YEARS_BINNED","mean_age"],axis=1)
     
     return reduce_mem_usage(df)

@@ -31,35 +31,35 @@ def prepocess_data(path):
     df = df.drop("Id_Customer", axis=1)
 
     df = df.dropna()
-##Features engeenering 
+    ##Features engeenering 
 
-## Income divide by num of year in business
-    df["bussiness_salaries"]=df["Net_Annual_Income"].astype("float")/(1+df["Years_At_Business"].values)
+    ## Income divide by num of year in business
+    df["bussiness_salaries"] = df["Net_Annual_Income"].astype("float")/(1+df["Years_At_Business"].values)
 
     ## change all status different to married to "Single"
     df["Marital_Status"]=np.where((df["Marital_Status"]!="Married"),"Alone",df["Marital_Status"])
 
     ## Income divide by Nb_Poject
-
     df["Nb_salaries"]=df["Net_Annual_Income"].astype("float")/(1+df["Nb_Of_Products"].values)
 
     ##dependance divide by num of year in business
 
     df["money_by_person"]=df["Net_Annual_Income"]/(1+df["Number_Of_Dependant"])
-    
+
     ### Process for ratio_age_bussiness
     df['YEARS_BINNED'] = pd.cut(df['join_age'], bins = [0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75])
     age_data=df[["join_age","YEARS_BINNED","Y"]]
+    
     #Group by the bin and calculate averages
     age_groups  = age_data.groupby('YEARS_BINNED').mean()
-    age_groups=age_groups.rename(columns={"join_age": "mean_age"})
-    age_groups=age_groups.drop("Y",axis=1)
+    age_groups = age_groups.rename(columns={"join_age": "mean_age"})
+    age_groups = age_groups.drop("Y", axis=1)
 
     df = pd.merge(df,age_groups,on = 'YEARS_BINNED',how = 'left')
     ##mean_age divide by Years_At_Residence
     # df["ratio_age_business"]=df["mean_age"]/(1+df["Years_At_Residence"])
     df=df.drop(["join_age","YEARS_BINNED","mean_age"],axis=1)
-    
+
     return reduce_mem_usage(df)
 
 def encode_data(df):

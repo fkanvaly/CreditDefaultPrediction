@@ -1,30 +1,10 @@
-# Etape 4
+# Credit Default Prediction
 
-Raspberry pi -> Micro de la porte
+Authors: Kanvaly FADIGA & Mohamed TRAORE
 
-#### Variable globales
+We made 3 notebooks. Each one deals with a step in the pipeline of a learning machine project:
+- Explanatory Data Analysis (EDA) & Features Engineering
+- Sampling stratregy to deal with imbalanced data
+- Model training and tuning
 
-```C
-int i = 10 //nombre d'i
-float b = 10
-while (){
-    //*
-}
-```
-
-RASP
-```
-thread1
-
-thread2: lecture sur le port en bI
-si c = 
-
-
-```
-
-
-micro 
-```
-thread1
-thread2
-```
+We write python script separatly in order to have clean notebook. Take a look in folders to get more details. 

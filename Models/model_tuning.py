@@ -50,8 +50,8 @@ tuning_grid = {
                 
                 "RandomForestClassifier" : {
                                     "n_estimators" : [100, 500, 1200],
-                                    "max_depth" : [5, 8, 15, 25, 30],
-                                    "min_samples_split" : [10, 15, 100],
+                                    "max_depth" : [5, 8, 15, 25],
+                                    "min_samples_split" : [10, 15, 50],
                                 },
                 
                 "MLPClassifier" : {
@@ -71,16 +71,17 @@ tuning_grid = {
                 
                 }
 
-def tune_model(classifiers, X_, y_):
+def tune_model(classifiers, X, y, scoring='f1'):
     tuned_params = {}
     tuned_estimator = {}
     for name, clf in classifiers.items():
         print("Grid search for %s"%name)
+        param_grid = {name.lower()+"__"+k:v for k,v in tuning_grid[name].items()}
         search = GridSearchCV(clf, 
-                              tuning_grid[name], 
-                              cv=5, n_jobs=-1, scoring='f1', verbose=1)
-        search.fit(X_,y_)
-        print(search.best_params_ )
+                              param_grid, 
+                              cv=5, n_jobs=-1, 
+                              scoring=scoring, verbose=1)
+        search.fit(X,y)
         tuned_params[name] = search.best_params_
         tuned_estimator[name] = search.best_estimator_
     
@@ -94,17 +95,17 @@ if __name__ == "__main__":
     y = df.Y
     X = df.drop("Y", axis=1)
 
-    # classifiers = {
-    #                 "LogisiticRegression": LogisticRegression(penalty='l2',max_iter=4000, n_jobs=-1),
-    #                 # "XGBoost": XGBClassifier(n_jobs=-1),
-    #                 # "KNeighbors" : KNeighborsClassifier(3, n_jobs=-1),
-    #                 # "SVC" : SVC(gamma=2, C=1),
-    #                 # "GaussianProcess" : GaussianProcessClassifier(1.0 * RBF(1.0), n_jobs=-1),
-    #                 # "DecisionTree" : DecisionTreeClassifier(max_depth=5),
-    #                 # "RandomForest" : RandomForestClassifier(max_depth=5, n_estimators=500, max_leaf_nodes=16, n_jobs=-1),
-    #                 # "MLP" : MLPClassifier(alpha=1, max_iter=1000),
-    #                 # "AdaBoost" : AdaBoostClassifier(SGDClassifier(loss='log')),
-    #                 }
+    classifiers = {
+                    "LogisiticRegression": LogisticRegression(penalty='l2',max_iter=4000, n_jobs=-1),
+                    # "XGBoost": XGBClassifier(n_jobs=-1),
+                    # "KNeighbors" : KNeighborsClassifier(3, n_jobs=-1),
+                    # "SVC" : SVC(gamma=2, C=1),
+                    # "GaussianProcess" : GaussianProcessClassifier(1.0 * RBF(1.0), n_jobs=-1),
+                    # "DecisionTree" : DecisionTreeClassifier(max_depth=5),
+                    # "RandomForest" : RandomForestClassifier(max_depth=5, n_estimators=500, max_leaf_nodes=16, n_jobs=-1),
+                    # "MLP" : MLPClassifier(alpha=1, max_iter=1000),
+                    # "AdaBoost" : AdaBoostClassifier(SGDClassifier(loss='log')),
+                    }
     classifiers = {
                     # "LogisiticRegression": LogisticRegression(penalty='l2',max_iter=4000, n_jobs=-1),
                     # "XGBoost": XGBClassifier(n_jobs=-1),
